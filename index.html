@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 보고서·발표자료 제작 도우미</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-sub: #F1F5F9;
+      --text-main: #0F172A;
+      --text-sub: #475569;
+      --text-muted: #94A3B8;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --accent-green: #059669;
+      --accent-green-hover: #047857;
+      --accent-green-light: #ECFDF5;
+      --accent-purple: #7C3AED;
+      --accent-purple-light: #F5F3FF;
+      --accent-amber: #D97706;
+      --accent-amber-light: #FFFBEB;
+      --border: #E2E8F0;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Noto Sans KR", "Malgun Gothic", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      letter-spacing: -0.015em;
+      padding-bottom: 80px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 22px 24px;
+      position: relative;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12.5px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1220px;
+      margin: 24px auto 0;
+      padding: 0 20px;
+    }
+
+    /* 3 Pillars Overview Banner */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pillar-card.active {
+      border: 2px solid var(--primary);
+      background: var(--primary-light);
+    }
+
+    .pillar-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pillar-info h3 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .pillar-info p {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      line-height: 1.45;
+    }
+
+    /* Step Navigation Tabs */
+    .step-nav {
+      display: flex;
+      gap: 8px;
+      background: var(--surface);
+      padding: 8px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      margin-bottom: 22px;
+      overflow-x: auto;
+    }
+
+    .step-tab {
+      flex: 1;
+      min-width: 210px;
+      padding: 12px 14px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .step-tab:hover {
+      background: var(--surface-sub);
+      color: var(--text-main);
+    }
+
+    .step-tab.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Main Panel Layout */
+    .step-panel {
+      display: none;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-title {
+      font-size: 17.5px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width:100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13.5px;
+      color: var(--text-main);
+      background: var(--bg);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.55;
+    }
+
+    /* Apply Previous Step Action Bar & Status Banner */
+    .apply-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-apply {
+      flex: 1;
+      padding: 11px 16px;
+      background: var(--accent-green);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+    }
+
+    .btn-apply:hover {
+      background: var(--accent-green-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-apply:active {
+      transform: translateY(0);
+    }
+
+    .btn-clear {
+      padding: 11px 14px;
+      background: var(--surface-sub);
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-clear:hover {
+      background: #FEE2E2;
+      color: #DC2626;
+      border-color: #FECACA;
+    }
+
+    .apply-status-box {
+      margin-top: 10px;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      line-height: 1.5;
+      background: var(--surface-sub);
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+      transition: all 0.25s ease;
+    }
+
+    .apply-status-box.applied {
+      background: var(--accent-green-light);
+      color: #065F46;
+      border-color: #6EE7B7;
+      font-weight: 700;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--bg);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    /* Prompt Output Box */
+    .prompt-box-wrapper {
+      position: relative;
+      background: #0F172A;
+      color: #F8FAFC;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      font-family: "Pretendard Variable", monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 460px;
+      overflow-y: auto;
+      border: 2px solid #1E293B;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .prompt-box-wrapper.flash-active {
+      border-color: #10B981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-copy {
+      flex: 1;
+      min-width: 200px;
+      padding: 14px 20px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-copy:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.99);
+    }
+
+    /* Verification Checklist Box */
+    .qa-badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .qa-pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      border: 1px solid #A7F3D0;
+    }
+
+    .qa-pill.dynamic-active {
+      background: #FEF3C7;
+      color: #B45309;
+      border-color: #FCD34D;
+    }
+
+    /* Tool Links Box */
+    .tool-links-section {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .tool-links-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tool-links-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tool-link {
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      background: var(--surface-sub);
+      color: var(--text-main);
+      border: 1.5px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .tool-link:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.12);
+    }
+
+    .tool-link:active {
+      transform: translateY(0);
+    }
+
+    .badge-free {
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--accent-green-light);
+      color: var(--accent-green);
+      font-weight: 800;
+    }
+
+    .ext-arrow {
+      font-size: 12px;
+      opacity: 0.65;
+    }
+
+    /* Quick Fallback Launch Modal */
+    .launch-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .launch-modal-backdrop.active {
+      display: flex;
+    }
+
+    .launch-modal {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width:100%;
+      padding: 26px 28px;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+      border: 1px solid var(--border);
+      animation: fadeIn 0.2s ease;
+    }
+
+    .launch-modal h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .launch-modal p {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+      line-height: 1.55;
+    }
+
+    .url-copy-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .url-copy-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-sub);
+      font-size: 13px;
+      color: var(--text-main);
+      font-family: monospace;
+    }
+
+    /* Step 3 Sub-tabs */
+    .route-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .route-btn {
+      padding: 14px 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .route-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .route-btn.active {
+      background: var(--primary-light);
+      border: 2px solid var(--primary);
+    }
+
+    .route-btn-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--primary);
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .route-btn h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .route-btn p {
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.35;
+    }
+
+    .guide-steps {
+      background: var(--surface-sub);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 13px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .guide-steps ol {
+      padding-left: 18px;
+    }
+
+    .guide-steps li {
+      margin-bottom: 6px;
+    }
+
+    /* External-tool fallback dialog buttons */
+    .btn-dialog {
+      padding: 8px 13px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-dialog:hover {
+      background: var(--surface-sub);
+      border-color: var(--text-muted);
+    }
+
+    .btn-dialog.primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .btn-dialog.success {
+      background: var(--accent-green);
+      color: #fff;
+      border-color: var(--accent-green);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #0F172A;
+      color: #FFFFFF;
+      padding: 14px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+.theme-preview{border:1px solid #cbd5e1;border-radius:12px;padding:32px;margin:12px 0;min-height:150px;display:flex;flex-direction:column;justify-content:center;color:#0f172a;background:var(--lecture-backdrop,#fff);background-size:var(--lecture-background-size,cover);}
+.theme-preview strong{font-size:24px;}.theme-preview p{font-size:16px;color:inherit;}.theme-description{font-size:13px;color:#475569;margin:8px 0;}
+.theme-preview.theme-light{--lecture-backdrop:radial-gradient(ellipse at 95% 5%,#dbeafe 0,transparent 44%),#fff;}
+.theme-preview.theme-grid{--lecture-backdrop:linear-gradient(90deg,#dbeafe 1px,transparent 1px),linear-gradient(#dbeafe 1px,transparent 1px),#fff;--lecture-background-size:48px 48px;}
+.theme-preview.theme-wave{--lecture-backdrop:radial-gradient(ellipse at 110% 120%,#a7f3d0 0 26%,#d1fae5 27% 39%,transparent 40%),#fff;}
+.theme-preview.theme-paper{--lecture-backdrop:radial-gradient(ellipse at 0 0,#ede4d2,transparent 65%),#fffdf8;}
+.theme-preview.theme-dawn{--lecture-backdrop:radial-gradient(ellipse at 100% 0,#ffedd5,transparent 42%),radial-gradient(ellipse at 0 100%,#dbeafe,transparent 40%),#fff;}
+.theme-preview.theme-dark{background:#0b1120;color:#f8fafc;} .theme-preview.theme-mckinsey{background:#f8fafc;color:#0f2942;} .theme-preview.theme-emerald{background:#f0fdf4;color:#064e3b;}
+
+:root {--primary:#1d4ed8;--bg:#f7f8fa;--text-muted:#64748b;}
+body{font-size:16px;word-break:keep-all;overflow-wrap:break-word;}
+.header h1{font-size:32px;letter-spacing:-.025em;}
+.brand-badge{font-size:13px;}
+.pillars-grid{gap:16px;}.pillar-card{box-shadow:none;}.pillar-info h3{font-size:17px;}.pillar-info p{font-size:14px;}
+.step-nav{position:sticky;top:0;z-index:20;background:#f7f8fa;padding:12px 0;}
+.step-tab{font-size:16px;min-height:52px;}.step-tab span{font-size:13px;}.step-locked{color:#475569;background:#e2e8f0;}
+.card{box-shadow:0 2px 10px #0f172a06;}.card-title{font-size:21px;}.card-desc{font-size:15px;line-height:1.7;}
+.form-label{font-size:16px;}.form-input,.form-select,.form-textarea{font-size:16px;line-height:1.6;}.form-textarea{min-height:220px;}
+.prompt-box-wrapper{font-size:16px;line-height:1.75;max-height:560px;}.btn-copy,.btn-apply,.btn-clear{min-height:46px;font-size:15px;}
+.result-entry{margin-top:24px;border:2px solid #bfdbfe;}.field-error{color:#b91c1c;font-size:14px;margin-top:8px;}.field-error:empty{display:none;}
+[aria-invalid="true"]{border-color:#b91c1c!important;}button:focus-visible,a:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #2563eb;outline-offset:3px;}
+.design-credit{text-align:center;font-size:13px;color:#64748b;padding:24px;}.design-credit a{color:#1d4ed8;}
+@media(max-width:700px){.step-nav{position:static;display:grid;grid-template-columns:1fr 1fr;}.header h1{font-size:25px;}}
+@media print{.design-credit{display:none!important;}}
+
+    /* Student authoring interface. Theme swatches keep their own palettes. */
+    :root {
+      color-scheme: dark;
+      --bg:#101113; --surface:#181b20; --surface-sub:#23272e;
+      --text-main:#f0f2f5; --text-sub:#b9c1cd; --text-muted:#a2adbd;
+      --primary:#9bbcff; --primary-hover:#bed3ff; --primary-light:#232e43;
+      --accent-green:var(--primary); --accent-green-hover:var(--primary-hover); --accent-green-light:var(--primary-light);
+      --accent-purple:var(--primary); --accent-purple-light:var(--primary-light);
+      --border:#383f4a; --shadow-sm:none; --shadow-md:0 6px 24px #0002;
+      --radius-lg:12px; --radius-md:8px; --radius-sm:6px;
+    }
+    [hidden]{display:none!important;}
+    body{background:var(--bg);color:var(--text-main);}
+    .header{padding:24px;background:#14161a;box-shadow:none;z-index:1;}
+    .header-inner{display:block;}
+    .header h1{font-size:clamp(25px,2.5vw,32px);font-weight:650;letter-spacing:-.035em;}
+    .container{max-width:1200px;margin-top:32px;}.header-inner{max-width:1200px;}.pillars-grid{gap:12px;margin-bottom:24px;}
+    .pillar-card{padding:16px;border-color:var(--border);background:transparent;}
+    .pillar-card.active{border:1px solid #63799c;background:#1d2532;}
+    .pillar-num{background:#2b3444;color:var(--primary);font-size:14px;}
+    .pillar-info h3{font-size:15px;}.pillar-info p{font-size:13px;line-height:1.6;}
+    .step-nav{background:#15181d;padding:6px;border-color:var(--border);gap:6px;top:0;z-index:20;}
+    .step-tab{min-width:0;min-height:52px;padding:12px;font-size:15px;font-weight:600;gap:8px;white-space:nowrap;transition:none;}
+    .step-tab span{font-size:12px;font-weight:500;}.step-tab.active{background:var(--primary);color:#101724;box-shadow:none;}
+    .step-locked{background:#20242b;color:#b7bfcc;}.step-tab:hover{background:#2c3340;color:#f0f2f5;}
+    .step-tab.active:hover{background:var(--primary-hover);color:#101724;}
+    .workspace-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;}.workspace-grid>*{min-width:0;}
+    .card{padding:24px;box-shadow:none;}.card-title{font-size:20px;font-weight:650;letter-spacing:-.025em;}
+    .card-desc{font-size:15px;line-height:1.75;margin:8px 0 24px;padding-bottom:20px;}
+    .form-group{margin-bottom:24px;}.form-label{font-size:15px;font-weight:600;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+    .form-input,.form-select,.form-textarea{background:#111419;border-color:#596474;font-size:16px;line-height:1.65;padding:12px 14px;}
+    .form-input::placeholder,.form-textarea::placeholder{color:#a2adbd;opacity:1;}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{background:#111419;border-color:var(--primary);box-shadow:0 0 0 3px #9bbcff24;}
+    .form-input,.form-select{height:48px;padding:10px 12px;line-height:26px;}.form-select{max-width:100%;}.form-select option{background:#181b20;color:#f0f2f5;}
+    .form-textarea{min-height:200px;}.custom-count-group{margin-top:14px;}.count-input-row{display:flex;align-items:center;gap:12px;}.count-input-row input{max-width:180px;}
+    .field-help,.count-summary,.prompt-status{font-size:14px;line-height:1.7;color:var(--text-sub);margin-top:10px;}
+    .count-summary{color:#bed3ff;margin:12px 0 16px;}.prompt-status{margin:0 0 12px;}
+    .field-error{color:#ffb1ae;margin-top:8px;font-weight:600;}
+    [aria-invalid="true"]{border-color:#ff9e9a!important;}
+    .prompt-box-wrapper{background:#111419;border:1px solid #414b59;color:#e2e7ee;font-family:inherit;font-size:15px;line-height:1.85;max-height:560px;padding:22px;}
+    .prompt-box-wrapper.flash-active{border-color:var(--primary);box-shadow:0 0 0 3px #9bbcff22;}
+    .btn-copy,.btn-apply,.btn-dialog.primary,.btn-dialog.success{background:var(--primary);color:#111827;font-weight:600;min-height:48px;box-shadow:none;border-color:var(--primary);}
+    .btn-copy:hover,.btn-apply:hover,.btn-dialog.primary:hover,.btn-dialog.success:hover{background:var(--primary-hover);}
+    .btn-copy:disabled{opacity:.55;cursor:not-allowed;}
+    .btn-clear:hover{background:#3b272b;color:#ffb1ae;border-color:#aa6c71;}
+    .btn-dialog{min-height:44px;}.result-entry{border:1px solid #63799c;margin-top:24px;}
+    .apply-status-box.applied{background:#202a3c;border-color:#536f9c;color:#d9e5fc;}
+    .checkbox-group{background:#111419;border-color:#596474;gap:12px;padding:16px;}.checkbox-label{font-size:14px;align-items:flex-start;line-height:1.65;}
+    input[type="checkbox"]{accent-color:var(--primary);width:18px;height:18px;flex-shrink:0;margin-top:3px;}
+    .tool-links-title{font-size:13px;}.tool-link{background:#20252d;border-color:#424c5b;font-weight:600;min-height:44px;}
+    .badge-free{background:transparent;color:#b9c1cd;padding:0;font-weight:400;}
+    .route-tabs{gap:12px;margin-bottom:24px;}.route-btn{background:#15181d;border-color:#485260;}.route-btn:hover{border-color:var(--primary);}
+    .route-btn.active{background:#202a3c;border-color:var(--primary);box-shadow:none;}
+    .route-btn-tag{background:#33435f!important;color:#dbe8ff;}.route-btn h4{font-size:17px;}.route-btn p{font-size:14px;line-height:1.6;}
+    .guide-steps{font-size:14px;line-height:1.8;background:#20252d;border-left:2px solid #6f8cbb;}
+    .theme-description{color:var(--text-sub);line-height:1.7;}
+    .design-credit{color:var(--text-muted);}.design-credit a{color:#b5ceff;}
+    .launch-modal{background:var(--surface);color:var(--text-main);}.launch-modal-input{background:#111419;color:var(--text-main);border-color:#596474;}
+    .skip-link{position:fixed;left:16px;top:8px;transform:translateY(-200%);background:#bed3ff;color:#111827;padding:12px 16px;border-radius:6px;z-index:100;}.skip-link:focus{transform:none;}
+    button:focus-visible,a:focus-visible,[role="button"]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #b8d1ff;outline-offset:3px;}
+    .theme-preview{color-scheme:light;}.theme-preview.theme-dark{color-scheme:dark;}
+    @media(max-width:1050px){.header-inner{display:block;}.step-tab{flex-direction:column;gap:1px;font-size:14px;}.step-tab span{font-size:12px;}}
+    @media(max-width:900px){.workspace-grid{grid-template-columns:minmax(0,1fr);}.route-tabs{grid-template-columns:1fr;}.route-btn{text-align:left;}.card{padding:24px;}}
+    @media(max-width:700px){
+      .header{padding:20px;}.header h1{font-size:26px;line-height:1.4;}
+      .container{padding:0 16px;margin-top:20px;}.pillars-grid{grid-template-columns:1fr;gap:8px;}.pillar-card{padding:12px 14px;}
+      .step-nav{position:static;display:grid;grid-template-columns:1fr;overflow:visible;}.step-tab{white-space:normal;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;gap:8px;min-height:48px;font-size:14px;}
+      .card{padding:20px;}.card-title{font-size:19px;}.form-label{align-items:flex-start;}.form-label span:last-child{line-height:1.6;}
+      .tool-links-title{display:block;}.tool-link{flex-wrap:wrap;}.btn-copy{min-width:0;}
+      .prompt-box-wrapper{padding:16px;font-size:14px;}.apply-bar .btn-apply{flex-basis:100%;}.theme-preview{max-width:100%;}
+    }
+    @media(prefers-reduced-motion:reduce){.step-panel{animation:none;}button,a,.pillar-card{transition:none!important;}}
+
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#step-1" onclick="switchStep(1);document.getElementById('s1-course').focus();return false;">제작 설정으로 이동</a>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <h1>AI 보고서·발표자료 제작 도우미</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 3 Pillars Summary Cards -->
+    <section class="pillars-grid">
+      <div class="pillar-card active" onclick="switchStep(1)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="pillar-num">1</div>
+        <div class="pillar-info">
+          <h3>목차 설계</h3>
+          <p>주제와 장수에 맞춰 발표의 흐름을 정합니다.</p>
+        </div>
+      </div>
+      <div class="pillar-card" onclick="switchStep(2)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="pillar-num">2</div>
+        <div class="pillar-info">
+          <h3>근거 조사</h3>
+          <p>목차에 필요한 사례와 수치, 출처를 조사합니다.</p>
+        </div>
+      </div>
+      <div class="pillar-card" onclick="switchStep(3)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+        <div class="pillar-num">3</div>
+        <div class="pillar-info">
+          <h3>발표자료 디자인</h3>
+          <p>조사한 내용을 원하는 발표 형식으로 정리합니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="step-nav">
+      <button class="step-tab active" onclick="switchStep(1)" aria-controls="step-1">1. 목차 설계 · <span id="step-status-1">진행 가능</span></button>
+      <button class="step-tab" onclick="switchStep(2)" aria-controls="step-2">2. 근거 조사 · <span id="step-status-2">이전 결과 필요</span></button>
+      <button class="step-tab" onclick="switchStep(3)" aria-controls="step-3">3. 발표자료 디자인 · <span id="step-status-3">이전 결과 필요</span></button>
+
+    </nav>
+
+    <!-- ==================== STEP 1 ==================== -->
+    <section id="step-1" class="step-panel active">
+      <div class="workspace-grid">
+        <!-- Left Input -->
+        <div class="card">
+          <h2 class="card-title">1단계 · 제작 설정</h2>
+          <p class="card-desc">수업과 주제, 발표 장수를 설정하세요. 생성된 프롬프트를 외부 AI에 전달하면 목차를 만들 수 있습니다.</p>
+
+          <div class="form-group">
+            <label class="form-label" for="s1-course">수업 / 발표 성격</label>
+            <input type="text" id="s1-course" class="form-input" value="대학교 교양 수업 과제 및 팀플 발표" oninput="updateStep1Prompt()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="s1-topic">보고서 / 발표 주제</label>
+            <input type="text" id="s1-topic" class="form-input" value="청년층 금융 문맹 문제의 실태와 실질적 해결 방안" placeholder="예: 생성형 AI의 저작권 논란과 해결 방향" oninput="updateStep1Prompt()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="s1-count">발표 장수</label>
+            <select id="s1-count" class="form-select" onchange="updateStep1Prompt()" aria-describedby="slide-count-help">
+              <option value="6" selected>6장</option>
+              <option value="8">8장</option>
+              <option value="10">10장</option>
+              <option value="custom">직접 입력</option>
+            </select>
+            <div id="custom-count-group" class="custom-count-group" hidden>
+              <label class="form-label" for="s1-custom-count">원하는 발표 장수</label>
+              <div class="count-input-row"><input type="number" id="s1-custom-count" class="form-input" min="3" max="60" step="1" inputmode="numeric" placeholder="예: 12" oninput="updateStep1Prompt()" aria-describedby="slide-count-help s1-count-error"><span>장</span></div>
+            </div>
+            <p id="slide-count-help" class="field-help">표지와 마무리를 포함한 총 장수입니다. 3~60장까지 입력할 수 있습니다.</p>
+            <p id="s1-count-error" class="field-error" role="alert"></p>
+            <p class="count-summary" data-slide-count-summary aria-live="polite"></p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="s1-framework">논리 전개 방식</label>
+            <select id="s1-framework" class="form-select" onchange="updateStep1Prompt()">
+              <option value="flow-standard" selected>문제해결형 · 배경 → 원인 → 해결</option>
+              <option value="flow-persuasion">주장·설득형 · 주장 → 근거 → 제언</option>
+              <option value="flow-consulting">분석·제안형 · 현황 → 진단 → 전략</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Right Output -->
+        <div class="card">
+          <h2 class="card-title"> 1단계: 발표용 복사용 프롬프트</h2>
+          
+
+          <div id="s1-prompt-output" class="prompt-box-wrapper"></div>
+
+          <div class="action-bar">
+            <button class="btn-copy" onclick="copyText('s1-prompt-output')"> 1단계 프롬프트 복사하기</button>
+          </div>
+
+          <div class="tool-links-section">
+            <div class="tool-links-title"> 버튼을 누르면 <strong>[프롬프트 자동 복사 + 사이트 열기]</strong>가 동시에 실행됩니다:</div>
+            <div class="tool-links-grid">
+              <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'chatgpt', 's1-prompt-output')">
+                 ChatGPT 열기 <span class="badge-free">프롬프트 전달</span> <span class="ext-arrow">↗</span>
+              </a>
+              <a href="https://claude.ai/new" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'claude', 's1-prompt-output')">
+                 Claude 열기 <span class="badge-free">프롬프트 전달</span> <span class="ext-arrow">↗</span>
+              </a>
+              <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'gemini', 's1-prompt-output')">
+                 Gemini 열기 <span class="badge-free">AI 도구</span> <span class="ext-arrow">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="card result-entry" id="result-entry-1"><h2 class="card-title">1단계 AI 답변 붙여넣기</h2><p class="card-desc">프롬프트를 외부 AI에 실행한 뒤 받은 답변을 아래에 붙여넣으세요. 프롬프트를 복사하는 것만으로는 다음 단계가 완료되지 않습니다.</p><div class="form-group">
+            <label class="form-label" for="s2-outline">
+              <span>1단계 결과물(목차) 붙여넣기</span>
+              <span style="font-size:11.5px; color:var(--primary); font-weight:800;">붙여넣기 후 [목차 반영 후 2단계로] 선택</span>
+            </label>
+            <textarea id="s2-outline" class="form-textarea" placeholder="외부 AI가 작성한 실제 결과를 붙여넣으세요. 최소 20자 이상이며, 입력 여부만 확인하고 내용의 사실성은 별도로 검토해야 합니다." aria-label="1단계 AI 답변 붙여넣기" aria-describedby="s2-outline-error"></textarea>
+
+            <div class="apply-bar">
+              <button type="button" class="btn-apply" onclick="switchStep(2)">목차 반영 후 2단계로</button>
+              <button type="button" class="btn-clear" onclick="clearStep2Outline()">
+                 비우기
+              </button>
+            </div>
+
+            <div id="s2-apply-status" class="apply-status-box">
+              1단계 AI 답변을 붙여넣고 <strong>[목차 반영 후 2단계로]</strong>를 선택하면, 다음 단계의 조사 프롬프트에 목차가 반영됩니다.
+            </div>
+          </div>
+
+          <p id="s2-outline-error" class="field-error" role="alert"></p></div></section>
+
+    <!-- ==================== STEP 2 ==================== -->
+    <section id="step-2" class="step-panel">
+      <div class="workspace-grid">
+        <!-- Left Input -->
+        <div class="card">
+          <h2 class="card-title">2단계 · 근거 조사</h2>
+          <p class="card-desc">이전 단계에서 입력한 결과를 반영한 프롬프트입니다. 아래 옵션을 조정하고 외부 AI에서 실행하세요.</p><p class="count-summary" data-slide-count-summary></p>
+
+          <div class="form-group">
+            <label class="form-label">팩트 체크 &amp; 데이터 추출 필수 규칙</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="s2-opt-stat" checked onchange="updateStep2Prompt(false)">
+                차트 시각화용 정량 데이터(%, 점수, 증감률 최소 3개 비교 세트) 필수 추출
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="s2-opt-case" checked onchange="updateStep2Prompt(false)">
+                실제 국내외 기관·기업·정책 사례(고유명사 명시) 필수 포함
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="s2-opt-cite" checked onchange="updateStep2Prompt(false)">
+                할루시네이션 방지: 모든 통계 옆에 (출처: 기관명, 발표연도) 표기 강제
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="s2-opt-tone" checked onchange="updateStep2Prompt(false)">
+                AI 번역투 제거 + 같은 복사 블록 안에서 [파트 A: 레포트 본문]과 [파트 B: 슬라이드 요약] 구분
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Output -->
+        <div class="card">
+          <h2 class="card-title"> 2단계: 딥리서치 &amp; 데이터 추출 프롬프트</h2>
+          <p id="s2-dynamic-pill" class="prompt-status"></p>
+
+          <div id="s2-prompt-output" class="prompt-box-wrapper"></div>
+
+          <div class="action-bar">
+            <button class="btn-copy" onclick="copyText('s2-prompt-output')"> 2단계 리서치 프롬프트 복사하기</button>
+          </div>
+
+          <div class="tool-links-section">
+            <div class="tool-links-title"> 버튼을 누르면 <strong>[프롬프트 자동 복사 + 리서치 AI 열기]</strong>가 동시에 실행됩니다:</div>
+            <div class="tool-links-grid">
+              <a href="https://www.perplexity.ai/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'perplexity', 's2-prompt-output')">
+                 Perplexity 열기 <span class="badge-free">검색 도구</span> <span class="ext-arrow">↗</span>
+              </a>
+              <a href="https://getliner.com/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'liner', 's2-prompt-output')">
+                 Liner 열기 <span class="badge-free">학술·출처 검색</span> <span class="ext-arrow">↗</span>
+              </a>
+              <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'gemini', 's2-prompt-output')">
+                 Gemini 열기 <span class="badge-free">구글 검색 연동</span> <span class="ext-arrow">↗</span>
+              </a>
+              <a href="https://notebooklm.google.com/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'notebooklm', 's2-prompt-output')">
+                 NotebookLM 열기 <span class="badge-free">내 논문/PDF 기반</span> <span class="ext-arrow">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="card result-entry" id="result-entry-2"><h2 class="card-title">2단계 조사 결과 붙여넣기</h2><p class="card-desc">프롬프트를 외부 AI에 실행한 뒤 받은 답변을 아래에 붙여넣으세요. 프롬프트를 복사하는 것만으로는 다음 단계가 완료되지 않습니다.</p><div class="form-group">
+              <label class="form-label" for="s3-content">
+                <span> 2단계 리서치 결과 붙여넣기</span>
+                <span style="font-size:11.5px; color:var(--primary); font-weight:800;">붙여넣기 후 [조사 결과 반영 후 3단계로] 선택</span>
+              </label>
+              <textarea id="s3-content" class="form-textarea" placeholder="외부 AI가 작성한 실제 결과를 붙여넣으세요. 최소 20자 이상이며, 입력 여부만 확인하고 내용의 사실성은 별도로 검토해야 합니다." aria-label="2단계 조사 결과 붙여넣기" aria-describedby="s3-content-error"></textarea>
+
+              <div class="apply-bar">
+                <button type="button" class="btn-apply" onclick="switchStep(3)">조사 결과 반영 후 3단계로</button>
+                <button type="button" class="btn-clear" onclick="clearStep3Content()">
+                   비우기
+                </button>
+              </div>
+
+              <div id="s3-apply-status" class="apply-status-box">
+                조사 결과를 붙여넣고 <strong>[조사 결과 반영 후 3단계로]</strong>를 선택하면, 다음 단계의 발표자료 프롬프트에 내용이 반영됩니다.
+              </div>
+            </div>
+
+            <p id="s3-content-error" class="field-error" role="alert"></p></div></section>
+
+    <!-- ==================== STEP 3 ==================== -->
+    <section id="step-3" class="step-panel">
+      <div class="card" style="margin-bottom: 20px;">
+        <h2 class="card-title">3단계 · 발표자료 디자인</h2>
+        <p class="card-desc" style="margin-bottom: 14px; padding-bottom: 12px;">이전 단계에서 입력한 결과를 반영한 프롬프트입니다. 아래 옵션을 조정하고 외부 AI에서 실행하세요.</p><p class="count-summary" data-slide-count-summary></p>
+
+        <div class="route-tabs">
+          <button class="route-btn active" id="route-btn-1" onclick="selectRoute(1)">
+            <span class="route-btn-tag">루트 A · 웹 발표 (권장)</span>
+            <h4>마우스 클릭 수정 + 모션 웹 슬라이드</h4>
+            <p>카운트업·차트 모션이 작동하며, 화면에서 글자를 바로 고치고 [수정본 HTML 저장] 및 [PDF 인쇄]까지 지원합니다.</p>
+          </button>
+          <button class="route-btn" id="route-btn-2" onclick="selectRoute(2)">
+            <span class="route-btn-tag" style="background: var(--accent-purple);">루트 B · 파워포인트/캔바 호환</span>
+            <h4>벡터 도형 편집(SVG) + PPT 모핑 모션</h4>
+            <p>PPT나 캔바에서 [도형으로 변환] 시 글자와 박스가  낱개로 쪼개지는 벡터 장표와 모핑 연출표를 생성합니다.</p>
+          </button>
+          <button class="route-btn" id="route-btn-3" onclick="selectRoute(3)">
+            <span class="route-btn-tag" style="background: var(--accent-green);">루트 C · 디자이너 템플릿 조립</span>
+            <h4>템플릿용 요약 + Napkin 도식</h4>
+            <p>사람 디자이너가 만든 템플릿 글자 수에 분량에 맞게 맞춘 표와 Napkin AI 다이어그램 원고를 뽑아줍니다.</p>
+          </button>
+        </div>
+
+        <div class="workspace-grid">
+          <!-- Left Explanation & Input -->
+          <div>
+            <div class="form-group" id="theme-select-group">
+              <label class="form-label" for="s3-theme"> 발표자료 디자인 테마 선택 (루트 A/B 자동 반영)</label>
+              <select id="s3-theme" class="form-select" onchange="updateStep3Prompt(false)">
+                <option value="toss" selected>1. 단정한 흰색 (순백색 배경 + 로얄블루 포인트 + 쿨그레이 카드)</option>
+                <option value="mckinsey">2. 신뢰감 있는 남색 (화이트 배경 + 딥네이비 헤더 + 골드/앰버 강조)</option>
+                <option value="dark">3. 집중형 어두운 배경 (딥슬레이트 다크 배경 + 스카이블루 &amp; 글래스모피즘)</option>
+                <option value="emerald">4. 자연스러운 초록색 (화이트 배경 + 포레스트 그린 &amp; 민트 그레이 카드)</option>
+              <option value="light">5. 은은한 빛 — 밝은 종이 배경 가장자리에 부드러운 푸른 빛. 학술·교양 발표용.</option><option value="grid">6. 정갈한 격자 — 아주 옅은 격자와 단정한 흰 카드. 데이터·연구 결과용.</option><option value="wave">7. 잔잔한 물결 — 가장자리에 겹치는 민트 곡선. 환경·사회·정책 제안용.</option><option value="paper">8. 따뜻한 한지 — 아이보리 종이와 절제된 먹색. 인문학·역사·문화 발표용.</option><option value="dawn">9. 새벽빛 — 연한 살구와 푸른빛을 양 끝에 배치. 기획·아이디어 발표용.</option></select><div id="theme-preview" class="theme-preview" aria-label="선택한 발표 배경 미리보기"><strong>한눈에 읽히는 발표</strong><p>배경은 은은하게, 메시지는 또렷하게</p></div><p id="theme-description" class="theme-description"></p><label class="checkbox-label"><input type="checkbox" id="s3-motion" onchange="updateStep3Prompt(false)" aria-label="배경 움직임 사용"> 배경을 아주 천천히 움직이기 (기본: 정지)</label>
+            </div>
+
+            <div id="route-guide-box" class="guide-steps"></div>
+          </div>
+
+          <!-- Right Prompt Output -->
+          <div>
+            <p id="s3-dynamic-pill" class="prompt-status"></p>
+
+            <div id="s3-prompt-output" class="prompt-box-wrapper"></div>
+
+            <div class="action-bar">
+              <button class="btn-copy" onclick="copyText('s3-prompt-output')"> 3단계 발표용 프롬프트 복사하기</button>
+            </div>
+
+            <div class="tool-links-section">
+              <div class="tool-links-title"> 버튼을 누르면 <strong>[프롬프트 자동 복사 + 외부 도구 열기]</strong>가 동시에 실행됩니다:</div>
+              <div id="route-links" class="tool-links-grid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Fallback Quick Launch Modal -->
+  <div id="launch-modal-backdrop" class="launch-modal-backdrop" onclick="closeLaunchModal(event)">
+    <div class="launch-modal" onclick="event.stopPropagation()">
+      <h3 id="modal-tool-title">🚀 AI 도구 바로 열기</h3>
+      <p>
+        ✅ <strong>프롬프트는 이미 클립보드에 자동 복사되었습니다!</strong><br>
+        새 창이 열리지 않으면 아래 버튼을 누르거나 주소를 복사해 브라우저에서 열어주세요.
+      </p>
+      <div class="url-copy-row">
+        <input type="text" id="modal-tool-url" class="url-copy-input" readonly aria-label="modal-tool-url">
+        <button class="btn-dialog primary" onclick="copyModalUrl()">🔗 주소 복사</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+        <a id="modal-direct-link" href="#" target="_blank" rel="noopener" class="btn-copy" style="text-decoration:none; padding:11px 16px; font-size:14px;" onclick="closeLaunchModal()">
+          ↗️ 새 탭으로 바로 열기
+        </a>
+        <button class="btn-dialog" style="padding:11px 14px;" onclick="closeLaunchModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">✅ 클립보드에 프롬프트가 복사되었습니다! 외부 AI 창에 붙여넣기(Ctrl+V) 하세요.</div>
+
+<!-- Design references: VoltAgent's independent public DESIGN.md analyses.
+     https://github.com/VoltAgent/awesome-design-md/blob/main/design-md/vercel/DESIGN.md
+     https://github.com/VoltAgent/awesome-design-md/blob/main/design-md/claude/DESIGN.md
+     Reference license: MIT, Copyright (c) 2026 VoltAgent.
+     https://github.com/VoltAgent/awesome-design-md/blob/main/LICENSE
+     Student UI uses independently authored CSS; paid background components are not included. -->
+  <script>
+    const READABILITY_POLICY = '[발표 가독성 최우선 규칙 — 모든 장표와 출력 경로 공통]\n- 1920×1080 논리 캔버스 기준 제목 64px 이상, 본문·카드·차트 라벨·표 셀 36px 이상, 핵심 숫자 96px 이상. 출처·페이지 번호만 28px 이상 허용한다.\n- 한 장에 핵심 메시지 1개, 설명은 카드당 2~3줄, 한 줄 28자 이내를 목표로 한다. 자세한 레포트 본문은 발표자 노트/부록으로 분리한다. 핵심 수치·출처를 삭제하거나 새 사실을 만들지 않는다.\n- 선택한 총 장수를 유지한다. 큰 글자로 내용이 넘치면 핵심 메시지와 수치는 슬라이드에 남기고 상세 근거는 발표자 노트 또는 별도 보고서로 옮긴다. 폰트 축소, 잘라내기, 말줄임, 장표 내부 스크롤로 숨기거나 슬라이드를 임의로 추가하지 않는다.\n- 화면 크기에 맞춰 1920×1080 전체 캔버스를 균등 축소/확대해 16:9를 유지한다. 미리보기에서만 작아 보이는 것과 발표 글자 크기를 구분하며 전체화면 발표 버튼을 제공한다.\n- 좌우 안전여백 80px, 상하 64px 이상. 보통 글자 명도 대비 4.5:1 이상, 컬러만으로 의미를 전달하지 않는다. 최종 1920×1080 및 1280×720 화면에서 모든 장표의 잘림·겹침·카드와 표 오버플로를 검사한다.\n';
+    let currentRoute = 1;
+
+    // Tool Catalog with Auto-Prompt Query URL support
+    const AI_TOOLS = {
+      chatgpt: {
+        name: 'ChatGPT',
+        baseUrl: 'https://chatgpt.com/',
+        buildQueryUrl: (q) => `https://chatgpt.com/?q=${encodeURIComponent(q)}`
+      },
+      claude: {
+        name: 'Claude',
+        baseUrl: 'https://claude.ai/new',
+        buildQueryUrl: (q) => `https://claude.ai/new?q=${encodeURIComponent(q)}`
+      },
+      gemini: {
+        name: 'Gemini',
+        baseUrl: 'https://gemini.google.com/app',
+        buildQueryUrl: null
+      },
+      perplexity: {
+        name: 'Perplexity',
+        baseUrl: 'https://www.perplexity.ai/',
+        buildQueryUrl: (q) => `https://www.perplexity.ai/search?q=${encodeURIComponent(q)}`
+      },
+      liner: {
+        name: 'Liner',
+        baseUrl: 'https://getliner.com/',
+        buildQueryUrl: null
+      },
+      notebooklm: {
+        name: 'NotebookLM',
+        baseUrl: 'https://notebooklm.google.com/',
+        buildQueryUrl: null
+      },
+      canva: {
+        name: 'Canva',
+        baseUrl: 'https://www.canva.com/ko_kr/',
+        buildQueryUrl: null
+      },
+      miricanvas: {
+        name: '미리캔버스',
+        baseUrl: 'https://www.miricanvas.com/',
+        buildQueryUrl: null
+      },
+      napkin: {
+        name: 'Napkin AI',
+        baseUrl: 'https://app.napkin.ai/',
+        buildQueryUrl: null
+      },
+      jitter: {
+        name: 'Jitter',
+        baseUrl: 'https://jitter.video/',
+        buildQueryUrl: null
+      }
+    };
+
+    // Universal Clipboard Copy
+    function copyStringToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.style.top = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) {}
+    }
+
+    // Smart 1-Click Tool Launcher
+    function openAITool(event, toolKey, promptElementId) {
+      if (!requireSlideCount()) { event.preventDefault(); return false; }
+      const tool = AI_TOOLS[toolKey];
+      if (!tool) return true;
+
+      const promptEl = document.getElementById(promptElementId);
+      const promptText = promptEl ? promptEl.textContent.trim() : '';
+
+      if (promptText) {
+        copyStringToClipboard(promptText);
+      }
+
+      let targetUrl = tool.baseUrl;
+      if (tool.buildQueryUrl && promptText) {
+        const candidateUrl = tool.buildQueryUrl(promptText);
+        if (candidateUrl.length <= 3800) {
+          targetUrl = candidateUrl;
+        }
+      }
+
+      const anchor = event.currentTarget;
+      if (anchor && anchor.tagName === 'A') {
+        anchor.href = targetUrl;
+      }
+
+      let win = null;
+      try {
+        if (window.top && window.top !== window.self && window.top.open) {
+          win = window.top.open(targetUrl, '_blank');
+        }
+      } catch (e) {}
+
+      if (!win) {
+        try {
+          win = window.open(targetUrl, '_blank');
+        } catch (e) {}
+      }
+
+      if (win) {
+        try { win.opener = null; } catch (e) {}
+        if (event) event.preventDefault();
+        showToast(`🚀 프롬프트 자동 복사 완료! ${tool.name} 새 창이 열렸습니다.`);
+        return false;
+      }
+
+      showToast(`✅ 프롬프트 복사 완료! ${tool.name} 창을 여는 중입니다...`);
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          showLaunchModal(tool.name, tool.baseUrl, targetUrl);
+        }
+      }, 350);
+
+      return true;
+    }
+
+    function showLaunchModal(toolName, displayUrl, fullTargetUrl) {
+      document.getElementById('modal-tool-title').textContent = `🚀 ${toolName} 바로 열기 (프롬프트 복사 완료!)`;
+      document.getElementById('modal-tool-url').value = displayUrl;
+      document.getElementById('modal-direct-link').href = fullTargetUrl;
+      document.getElementById('launch-modal-backdrop').classList.add('active');
+    }
+
+    function closeLaunchModal(event) {
+      document.getElementById('launch-modal-backdrop').classList.remove('active');
+    }
+
+    function copyModalUrl() {
+      const urlInput = document.getElementById('modal-tool-url');
+      copyStringToClipboard(urlInput.value);
+      showToast('🔗 사이트 주소가 복사되었습니다! 브라우저 새 탭 주소창에 붙여넣기 하세요.');
+    }
+
+    // Visual Flash Effect on Prompt Box when Updated
+    function flashPromptBox(boxId) {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+      box.scrollTop = 0; // Scroll to top so user immediately sees the reflected changes!
+      box.classList.remove('flash-active');
+      void box.offsetWidth;
+      box.classList.add('flash-active');
+      setTimeout(() => box.classList.remove('flash-active'), 1400);
+    }
+
+    // Switch Top Steps
+    function showStep(stepNum) {
+      if (![1, 2, 3].includes(stepNum)) return false;
+      document.querySelectorAll('.step-panel').forEach((el, idx) => {
+        el.classList.toggle('active', idx === stepNum - 1);
+      });
+      document.querySelectorAll('.step-tab').forEach((el, idx) => {
+        el.classList.toggle('active', idx === stepNum - 1);
+      });
+      document.querySelectorAll('.pillar-card').forEach((el, idx) => {
+        el.classList.toggle('active', idx === stepNum - 1);
+      });
+      refreshProgress();
+    }
+
+
+    function getSlideCount() {
+      const selection = document.getElementById('s1-count');
+      const custom = document.getElementById('s1-custom-count');
+      const isCustom = selection.value === 'custom';
+      document.getElementById('custom-count-group').hidden = !isCustom;
+      custom.disabled = !isCustom;
+      const raw = isCustom ? custom.value.trim() : selection.value;
+      const count = Number(raw);
+      const valid = /^\d+$/.test(raw) && Number.isInteger(count) && count >= 3 && count <= 60;
+      const message = valid ? '' : '발표 장수를 3~60 사이의 정수로 입력하세요.';
+      document.getElementById('s1-count-error').textContent = message;
+      if (isCustom && !valid) custom.setAttribute('aria-invalid', 'true');
+      else custom.removeAttribute('aria-invalid');
+      document.querySelectorAll('[data-slide-count-summary]').forEach(el => {
+        el.textContent = valid ? `총 ${count}장 · 표지 1장 + 본문 ${count - 2}장 + 마무리 1장` : '발표 장수 입력이 필요합니다.';
+      });
+      document.querySelectorAll('.btn-copy').forEach(el => el.disabled = !valid);
+      return valid ? count : null;
+    }
+
+    function requireSlideCount() {
+      if (getSlideCount() !== null) return true;
+      showStep(1);
+      const field = document.getElementById('s1-custom-count');
+      field.focus();
+      field.scrollIntoView({block:'center',behavior:'instant'});
+      return false;
+    }
+
+    function slideCountInstruction(count) {
+      return `[발표 장수: 총 ${count}장]\n표지 1장 + 본문 ${count - 2}장 + 마무리 1장으로 구성하고, 1장부터 ${count}장까지 빠짐없이 번호를 붙일 것. 이 장수를 모든 단계와 출력 형식에 동일하게 적용한다.\n붙여넣은 이전 결과의 장수가 다르면 핵심 주제와 순서를 유지하며 내용을 통합하거나 세분화해 총 ${count}장으로 맞출 것. 상세 근거는 발표자 노트나 별도 보고서에 보존하고, 발표 슬라이드를 임의로 추가하거나 글씨를 줄이지 말 것.\n\n`;
+    }
+
+    function buildSlidePlan(count, topic) {
+      const fw = document.getElementById('s1-framework').value;
+      const flows = {
+        'flow-standard': [
+          ['배경 및 문제 정의', '주제가 중요한 이유와 핵심 지표를 보여 준다.'],
+          ['실태 및 격차 데이터', '현재 현황과 수치적 격차를 비교 차트로 보여 준다.'],
+          ['구조적 원인 진단', '근본 원인을 카드 또는 원인 관계도로 분석한다.'],
+          ['핵심 해결 로드맵', '실행 방안과 단계별 계획을 제시한다.']
+        ],
+        'flow-persuasion': [
+          ['핵심 주장과 문제의식', '발표가 제안하는 주장과 핵심 지표를 제시한다.'],
+          ['이론적·구조적 근거', '주장의 타당성을 뒷받침하는 근거를 분석한다.'],
+          ['정량 데이터 검증', '통계와 비교 차트로 주장을 검증한다.'],
+          ['적용 사례 및 실행안', '실제 사례와 구체적인 실행 계획을 제시한다.']
+        ],
+        'flow-consulting': [
+          ['환경 변화와 위기', '환경 변화와 그 안의 위기를 핵심 지표로 제시한다.'],
+          ['현장의 격차 데이터', '현장의 문제와 수치적 격차를 비교한다.'],
+          ['핵심 병목과 원인', '해결해야 할 병목과 구조적 원인을 진단한다.'],
+          ['돌파 전략과 실행 계획', '해결 전략과 단계별 실행 방안을 제시한다.']
+        ]
+      };
+      const roles = flows[fw] || flows['flow-standard'];
+      const bodyCount = count - 2, middle = [];
+      if (bodyCount < roles.length) {
+        for (let i = 0; i < bodyCount; i++) {
+          const group = roles.slice(Math.floor(i * roles.length / bodyCount), Math.floor((i + 1) * roles.length / bodyCount));
+          middle.push([group.map(x => x[0]).join(' · '), group.map(x => x[1]).join(' ')]);
+        }
+      } else {
+        roles.forEach((role, i) => {
+          const parts = Math.floor(bodyCount / roles.length) + (i < bodyCount % roles.length ? 1 : 0);
+          for (let part = 1; part <= parts; part++) {
+            middle.push([role[0] + (parts > 1 ? ` (${part}/${parts})` : ''), role[1] + (parts > 1 ? ' 각 장은 서로 다른 하위 주제와 하나의 핵심 메시지를 다룬다.' : '')]);
+          }
+        });
+      }
+      return [`- 1장 [표지]: ${topic}의 핵심 제목과 부제`, ...middle.map((role, i) => `- ${i + 2}장 [${role[0]}]: ${role[1]} 내용에 맞는 카드·차트·표·로드맵 중 하나를 선택한다.`), `- ${count}장 [기대 효과 및 제언]: 핵심 결론과 실천 제언을 요약한다.`].join('\n');
+    }
+
+    function singleBlockOutputInstruction(stepNum) {
+      const included = stepNum === 1
+        ? '표지부터 마무리까지 전체 목차, 각 목차의 핵심 메시지·시각화 유형·필수 조사 키워드, 다음 단계 조사 지침을 모두 같은 블록에 넣을 것.'
+        : '모든 목차의 [파트 A: 레포트 본문]과 [파트 B: 슬라이드 데이터], 수치·사례·각주, 마지막 [참고문헌 및 출처 URL] 목록까지 빠짐없이 같은 블록에 넣을 것.';
+      return [
+        '[최종 출력 형식 — 결과 전체를 한 번에 복사하는 단일 코드 블록]',
+        '- 응답 전체를 오직 하나의 text 코드 블록으로 출력할 것. 첫 줄은 ```text, 마지막 줄은 ```로 하고, 여는 코드펜스와 닫는 코드펜스를 각각 한 번만 사용할 것.',
+        '- 코드 블록 밖에는 인사, 서문, 설명, 요약, 맺음말, 추가 안내, 참고문헌이나 출처를 한 글자도 쓰지 말 것.',
+        '- ' + included,
+        '- 블록 안에서는 일반 텍스트 제목·번호·목록으로만 내용을 구분할 것. 내부 중첩 코드펜스, 다른 언어의 코드 블록, 목차별·파트별·출처별 추가 코드 블록을 만들지 말 것.',
+        '- 응답을 여러 메시지나 여러 복사 박스로 나누지 말고, 다음 단계 입력창에 통째로 붙여넣을 수 있도록 전체 결과를 한 블록에 완결할 것.',
+        ...(stepNum === 2 ? ['- [참고문헌 및 출처 URL]에는 본문에서 사용한 자료의 기관/저자, 자료명, 발표연도 또는 날짜, 실제 원문 URL을 일반 텍스트로 함께 적을 것. 블록 밖 인용 카드나 링크만으로 출처를 대신하지 말 것. 확인하지 못한 정보는 확인 불가로 표시하고 존재하지 않는 출처나 URL을 만들지 말 것.'] : [])
+      ].join('\n');
+    }
+
+    // ==================== STEP 1 PROMPT GENERATOR ====================
+    function updateStep1Prompt() {
+      const course = document.getElementById('s1-course').value.trim() || '대학교 수업 과제';
+      const topic = document.getElementById('s1-topic').value.trim() || '[주제 입력]';
+      const count = getSlideCount();
+      if (count === null) {
+        ['s1-prompt-output','s2-prompt-output','s3-prompt-output'].forEach(id => document.getElementById(id).textContent = '발표 장수를 올바르게 입력하면 프롬프트가 표시됩니다.');
+        return;
+      }
+      const fwText = buildSlidePlan(count, topic);
+
+      const prompt = `${slideCountInstruction(count)}나는 [${course}]를 준비하는 대학생이야.
+이번에 "${topic}"라는 주제로 학술적인 레포트 겸 발표자료(PPT)를 동시에 만들려고 해.
+
+뻔한 위키백과식 정의 나열은 절대 금지하고, 아래 [논리 전개 및 슬라이드 레이아웃 매핑 틀]에 맞춰 총 ${count}장 분량의 목차 기획안을 설계해 줘.
+
+[논리 전개 및 슬라이드 레이아웃 매핑 틀]
+${fwText}
+
+[작성 필수 규칙 (매우 중요)]
+1. [기계적 틀 용어 노출 절대 금지]: 생성되는 목차 제목이나 소제목에 프레임워크 영문 약어나 '서론/본론/결론' 같은 기계적인 라벨을 직접 적지 말고, 실제 전문 보고서나 학술 발표장표처럼 주제의 맥락에 맞는 자연스럽고 세련된 제목(예: '01. 청년 금융 문맹의 확산과 생존 위기')으로 작성할 것.
+2. [두괄식 원 메시지 제목]: 각 목차 제목은 단어로 끝내지 말고, 나중에 슬라이드 상단 헤드카피(One-Message)로 바로 쓸 수 있도록 '핵심 결론이 담긴 완성된 한 줄 문장(25자 내외)'으로 작성할 것.
+3. 각 목차마다 [추천 시각화 레이아웃 유형(예: 3대 KPI 빅넘버, 가로 비교 차트, 2x2 원인 매트릭스, 3단계 로드맵, AS-IS/TO-BE 비교표)]과 2단계에서 검색해야 할 '필수 통계/사례 키워드'를 1줄씩 적어줄 것.
+
+[다음 단계 조사 지침]
+총 ${count}장의 목차 기획안 뒤에, 총 ${count}장이라는 조건과 확정한 목차의 순서·핵심 주제·시각화 유형을 유지하며 최신 통계, 실제 사례, 출처(기관명, 연도, URL) 및 레포트 본문을 조사할 지침을 덧붙여 줘. 이 지침은 목차 기획안과 같은 복사 블록 안의 일반 텍스트 항목으로 작성하고, 별도의 프롬프트 코드박스나 중첩 코드펜스를 만들지 말 것.`;
+
+      document.getElementById('s1-prompt-output').textContent = prompt + '\n\n' + READABILITY_POLICY + '\n\n' + singleBlockOutputInstruction(1);
+      updateStep2Prompt(false);
+      updateStep3Prompt(false);
+    }
+
+    // ==================== STEP 2 PARSER & PROMPT GENERATOR ====================
+    function parseStep1Outline(rawText) {
+      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const headings = [];
+      for (const line of lines) {
+        if (/^(?:\d+장|\d+\.|Slide\s*\d+|■|▶|[-*]\s*\d+장|[-*]\s*\[?\d+|Ⅰ|Ⅱ|Ⅲ|Ⅳ|Ⅴ)/i.test(line) || (line.includes('[') && line.includes(']') && line.length < 110)) {
+          headings.push(line);
+        }
+      }
+      return {
+        charCount: rawText.length,
+        headings: headings.slice(0, 60)
+      };
+    }
+
+    function applyStep2Outline() {
+      const raw = document.getElementById('s2-outline').value.trim();
+      if (!raw) {
+        showToast('⚠️ 먼저 1단계에서 나온 목차 내용을 입력창에 붙여넣어 주세요!');
+        document.getElementById('s2-outline').focus();
+        return;
+      }
+      updateStep2Prompt(true);
+      flashPromptBox('s2-prompt-output');
+      showToast('✨ 1단계 목차 내용이 2단계 프롬프트 상단에  반영되었습니다!');
+    }
+
+    function clearStep2Outline() {
+      document.getElementById('s2-outline').value = ''; refreshProgress();
+      updateStep2Prompt(false);
+      flashPromptBox('s2-prompt-output');
+      showToast('🗑️ 입력창을 비우고 기본 표준 목차로 초기화했습니다.');
+    }
+
+    function updateStep2Prompt(isExplicitApply) {
+      const count = getSlideCount();
+      if (count === null) { document.getElementById('s2-prompt-output').textContent = '발표 장수를 올바르게 입력하면 프롬프트가 표시됩니다.'; return; }
+      const topic = document.getElementById('s1-topic').value.trim() || '[주제 입력]';
+      const outlineInput = document.getElementById('s2-outline').value.trim();
+      const optStat = document.getElementById('s2-opt-stat').checked;
+      const optCase = document.getElementById('s2-opt-case').checked;
+      const optCite = document.getElementById('s2-opt-cite').checked;
+      const optTone = document.getElementById('s2-opt-tone').checked;
+
+      const statusBox = document.getElementById('s2-apply-status');
+      const pill = document.getElementById('s2-dynamic-pill');
+
+      let rules = [];
+      rules.push(`1. [목차 절대 고정 및 자연스러운 표기] 아래 제시된 [고정 목차]의 순서와 핵심 주제를 임의로 바꾸지 말고 그대로 유지하되, 소제목 표기 시 기계적인 틀 명칭 없이 자연스러운 전문 학술 보고서 소제목으로 작성할 것.`);
+      if (optStat) rules.push(`2. [시각화용 정량 데이터 필수] 3단계에서 빅넘버 타일과 비교 차트를 그릴 수 있도록, 구체적인 통계 수치(%, 점수, 증감률, 비교 수치 최소 3개 이상)를 반드시 검색해 포함할 것.`);
+      if (optCase) rules.push(`3. [실제 고유명사 사례 포함] 추상적인 설명 대신 실제 정부 부처, 국내외 기업, 대학, 법안 등 실존하는 고유명사 사례를 제시할 것.`);
+      if (optCite) rules.push(`4. [할루시네이션 원천 차단] 추측성 수치는 절대 금지하며, 모든 통계와 팩트 뒤에는 반드시 (출처: 기관명, 발표연도)를 명시할 것.`);
+      if (optTone) rules.push(`5. [한 복사 블록 안의 이중 구조] 레포트 제출용 줄글 본문과 3단계 슬라이드 구조화 데이터를 각 목차 아래 [파트 A]와 [파트 B] 항목으로 구분하되, 전체 결과는 하나의 코드 블록 안에 이어서 작성할 것.`);
+
+      let topInjectedHeader = '';
+      let outlineBlock = '';
+
+      if (outlineInput) {
+        const parsed = parseStep1Outline(outlineInput);
+        const headingCount = parsed.headings.length;
+        statusBox.className = 'apply-status-box applied';
+        statusBox.innerHTML = `<strong>목차 ${parsed.charCount.toLocaleString()}자 반영</strong> · 2단계 조사 프롬프트에서 내용을 확인하세요.`;
+        pill.className = 'prompt-status';
+        pill.textContent = `1단계 목차 반영 (${parsed.charCount.toLocaleString()}자)`;
+
+        const extractedSummary = parsed.headings.length > 0
+          ? parsed.headings.map((h, i) => `  · [감지된 목차 ${i + 1}] ${h}`).join('\n')
+          : `  · (붙여넣은 1단계 전문이 아래 고정 목차 블록에 그대로 적용되었습니다)`;
+
+        topInjectedHeader = `[🎯 1단계에서 전달받아 확정된 맞춤 목차 요약 — 핵심 주제와 순서를 유지하고 선택한 발표 장수에 맞출 것]\n${extractedSummary}\n\n`;
+        outlineBlock = outlineInput;
+      } else {
+        statusBox.className = 'apply-status-box';
+        statusBox.innerHTML = `1단계 AI 답변을 붙여넣고 <strong>[목차 반영 후 2단계로]</strong>를 선택하면, 다음 단계의 조사 프롬프트에 목차가 반영됩니다.`;
+        pill.className = 'prompt-status';
+        pill.textContent = `목차 입력 후 조사 프롬프트를 확인하세요.`;
+
+        outlineBlock = buildSlidePlan(count, topic);
+      }
+
+      const prompt = `${slideCountInstruction(count)}${topInjectedHeader}다음 [고정 목차 및 기획안]을 바탕으로 "${topic}"에 대한 학술 레포트 본문 및 발표 슬라이드용 데이터를 리서치해서 작성해 줘.
+
+[리서치 및 작성 필수 규칙]
+${rules.join('\n')}
+
+[각 목차별 출력 포맷 (이 형식을 엄격히 지킬 것)]
+■ 목차 번호 및 자연스러운 소제목
+  - [파트 A: 레포트 제출용 상세 본문]: 학술적이고 자연스러운 한국어 줄글 (최소 4~5문장 이상, 출처 포함)
+  - [파트 B: 3단계 슬라이드 변환용 데이터]:
+    · 상단 카테고리 태그: 주제의 흐름을 보여주는 자연스러운 한글/영문 태그 (예: 01 · 배경 및 문제 정의)
+    · 원 메시지(Head Copy): 슬라이드 상단 요약 결론 1줄 (28자 이내)
+    · 핵심 데이터/포인트 3~4개: 차트나 카드 박스에 들어갈 [강조 숫자/키워드] + [소제목(12자 이내)] + [설명(35자 이내)]
+    · 슬라이드 하단 각주용 출처: (출처: 기관명, 연도)
+
+[고정 목차 및 1단계 기획 원문]
+${outlineBlock}`;
+
+      document.getElementById('s2-prompt-output').textContent = prompt + '\n\n' + READABILITY_POLICY + '\n\n' + singleBlockOutputInstruction(2);
+    }
+
+    // ==================== STEP 3 PARSER & PROMPT GENERATOR ====================
+    function parseStep2Content(rawText) {
+      const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const categories = [];
+      const headCopies = [];
+      const keyPoints = [];
+      const sources = [];
+      const sectionHeaders = [];
+
+      for (const line of lines) {
+        // Detect Category Tags
+        if (/상단\s*카테고리\s*태그\s*[:：]/i.test(line)) {
+          categories.push(line.replace(/^.*?상단\s*카테고리\s*태그\s*[:：]\s*/i, '').trim());
+        } else if (/^(?:■|###|##|\d+장|\d+\.)\s+/.test(line) && line.length < 90) {
+          sectionHeaders.push(line.replace(/^(?:■|###|##)\s*/, '').trim());
+        }
+
+        // Detect Head Copies (One-Message)
+        if (/원\s*메시지.*[:：]/i.test(line) || /Head\s*Copy.*[:：]/i.test(line)) {
+          headCopies.push(line.replace(/^.*?(?:원\s*메시지.*?|Head\s*Copy.*?)\s*[:：]\s*/i, '').trim());
+        }
+
+        // Detect structured bullet points like * [키워드] + [소제목] + 설명 or STEP 1/2/3
+        if ((line.includes('[') && line.includes(']') && line.includes('+')) || /^(?:[-*·•]\s*)?(?:\[.+?\]|\d+단계|STEP\s*\d+)/i.test(line)) {
+          if (!/파트\s*[AB]/i.test(line) && line.length > 8 && line.length < 180) {
+            keyPoints.push(line.replace(/^[-*·•]\s*/, '').trim());
+          }
+        }
+
+        // Detect citations / sources
+        const citeMatch = line.match(/\(\s*출처\s*[:：][^)]+\)/g);
+        if (citeMatch) {
+          citeMatch.forEach(c => {
+            if (!sources.includes(c)) sources.push(c);
+          });
+        } else if (/출처\s*[:：]/i.test(line) && line.length < 120) {
+          const cleanCite = line.replace(/^[-*·•]\s*/, '').trim();
+          if (!sources.includes(cleanCite)) sources.push(cleanCite);
+        }
+      }
+
+      return {
+        charCount: rawText.length,
+        categories: categories.slice(0, 10),
+        sectionHeaders: sectionHeaders.slice(0, 10),
+        headCopies: headCopies.slice(0, 10),
+        keyPoints: keyPoints.slice(0, 18),
+        sources: sources.slice(0, 10)
+      };
+    }
+
+    function applyStep3Content() {
+      const raw = document.getElementById('s3-content').value.trim();
+      if (!raw) {
+        showToast('⚠️ 먼저 2단계 리서치 결과를 입력창에 붙여넣어 주세요!');
+        document.getElementById('s3-content').focus();
+        return;
+      }
+      updateStep3Prompt(true);
+      flashPromptBox('s3-prompt-output');
+      showToast('✨ 2단계 리서치 결과가 분석되어 3단계 프롬프트 상단 설계도에 반영되었습니다!');
+    }
+
+    function clearStep3Content() {
+      document.getElementById('s3-content').value = ''; refreshProgress();
+      updateStep3Prompt(false);
+      flashPromptBox('s3-prompt-output');
+      showToast('🗑️ 2단계 입력 내용을 비우고 기본 6종 레이아웃 가이드로 초기화했습니다.');
+    }
+
+    function selectRoute(routeNum) {
+      currentRoute = routeNum;
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`route-btn-${i}`).classList.toggle('active', i === routeNum);
+      }
+      document.getElementById('theme-select-group').style.display = (routeNum === 3) ? 'none' : 'block';
+      updateStep3Prompt(false);
+    }
+
+    const LECTURE_THEMES = {"light": {"name": "은은한 빛", "description": "밝은 종이 배경 가장자리에 부드러운 푸른 빛. 학술·교양 발표용.", "background": "radial-gradient(ellipse at 95% 5%,#dbeafe 0,transparent 44%),#fff"}, "grid": {"name": "정갈한 격자", "description": "아주 옅은 격자와 단정한 흰 카드. 데이터·연구 결과용.", "background": "linear-gradient(90deg,#dbeafe 1px,transparent 1px),linear-gradient(#dbeafe 1px,transparent 1px),#fff"}, "wave": {"name": "잔잔한 물결", "description": "가장자리에 겹치는 민트 곡선. 환경·사회·정책 제안용.", "background": "radial-gradient(ellipse at 110% 120%,#a7f3d0 0 26%,#d1fae5 27% 39%,transparent 40%),#fff"}, "paper": {"name": "따뜻한 한지", "description": "아이보리 종이와 절제된 먹색. 인문학·역사·문화 발표용.", "background": "radial-gradient(ellipse at 0 0,#ede4d2,transparent 65%),#fffdf8"}, "dawn": {"name": "새벽빛", "description": "연한 살구와 푸른빛을 양 끝에 배치. 기획·아이디어 발표용.", "background": "radial-gradient(ellipse at 100% 0,#ffedd5,transparent 42%),radial-gradient(ellipse at 0 100%,#dbeafe,transparent 40%),#fff"}};
+    function getThemeSpec(themeKey) {
+      const custom=LECTURE_THEMES[themeKey];
+      if(custom) return '- 테마: '+custom.name+' — '+custom.description+'\n- 직접 작성한 CSS 배경: '+custom.background+'; '+(themeKey==='grid'?'background-size:48px 48px; ':'')+'\n- 본문은 불투명한 흰색/아이보리 카드 위에 진한 글자(#0F172A), 보조 글자(#475569)로 배치. 본문 뒤의 무늬는 지우거나 충분히 옅게 만들고 제목·본문 최소 크기를 우선할 것. 외부 유료 코드·이미지·라이브러리는 사용하지 말 것.';
+
+      if (themeKey === 'mckinsey') {
+        return `- 배경: 순백색(#FFFFFF), 카드 배경: 쿨그레이(#F8FAFC), 테두리: 슬레이트(#CBD5E1)
+- 텍스트: 메인 차콜(#0F172A), 서브 설명(#334155)
+- 포인트 컬러: 맥킨지 딥네이비(#0F2942)를 메인으로 쓰고, 핵심 강조 수치에만 골드앰버(#D97706)를 사용할 것.`;
+      } else if (themeKey === 'dark') {
+        return `- 배경: 딥슬레이트 다크(#0B1120), 카드 배경: 다크 글래스(#1E293B), 테두리: (#334155)
+- 텍스트: 메인 화이트(#F8FAFC), 서브 설명(#94A3B8)
+- 포인트 컬러: 애플 키노트 스타일 스카이블루(#38BDF8)와 에메랄드(#10B981)만 제한적으로 사용할 것.`;
+      } else if (themeKey === 'emerald') {
+        return `- 배경: 순백색(#FFFFFF), 카드 배경: 소프트 민트(#F0FDF4), 테두리: (#BBF7D0)
+- 텍스트: 딥그린 차콜(#064E3B), 서브 설명(#047857)
+- 포인트 컬러: 에메랄드 그린(#059669)과 딥블루(#2563EB)만 사용할 것.`;
+      } else {
+        return `- 배경: 순백색(#FFFFFF), 카드 배경: 쿨그레이(#F8FAFC), 얇은 테두리(#E2E8F0)
+- 텍스트: 메인 차콜(#0F172A), 서브 설명(#475569), 각주(#94A3B8)
+- 포인트 컬러: 단정한 파란색(#2563EB)를 메인으로 쓰고, 위험/경고 수치에만 레드(#DC2626), 긍정 수치에 그린(#059669)을 사용할 것.`;
+      }
+    }
+
+    function updateStep3Prompt(isExplicitApply) {
+      const count = getSlideCount();
+      if (count === null) { document.getElementById('s3-prompt-output').textContent = '발표 장수를 올바르게 입력하면 프롬프트가 표시됩니다.'; return; }
+      const topic = document.getElementById('s1-topic').value.trim() || '[주제 입력]';
+      const themeKey = document.getElementById('s3-theme').value;
+      const themeSpec = getThemeSpec(themeKey);
+      const preview=document.getElementById('theme-preview');
+      if(preview) {preview.className='theme-preview theme-'+themeKey;document.getElementById('theme-description').textContent=LECTURE_THEMES[themeKey]?.description || '선택한 색상과 구도가 발표 프롬프트에 반영됩니다.';}
+      const motion=document.getElementById('s3-motion')?.checked;
+
+      const contentInput = document.getElementById('s3-content').value.trim();
+
+      const statusBox = document.getElementById('s3-apply-status');
+      const pill = document.getElementById('s3-dynamic-pill');
+
+      // Build Dynamic Blueprint from Pasted Step 2 Content!
+      let topReflectedBlueprint = '';
+      let layoutMappingSection = '';
+      let bottomRawDataSection = '';
+
+      if (contentInput) {
+        const parsed = parseStep2Content(contentInput);
+        const totalDetected = parsed.categories.length + parsed.headCopies.length + parsed.keyPoints.length + parsed.sectionHeaders.length;
+
+        statusBox.className = 'apply-status-box applied';
+        statusBox.innerHTML = `<strong>조사 결과 ${parsed.charCount.toLocaleString()}자 반영</strong> · 3단계 발표자료 프롬프트에서 내용을 확인하세요.`;
+
+        pill.className = 'prompt-status';
+        pill.textContent = `2단계 조사 결과 반영 (${parsed.charCount.toLocaleString()}자 · 핵심요소 ${totalDetected}개 추출)`;
+
+        let extractedLines = [];
+        if (parsed.categories.length > 0) {
+          extractedLines.push(`- 감지된 슬라이드 카테고리 태그: ${parsed.categories.join(' / ')}`);
+        } else if (parsed.sectionHeaders.length > 0) {
+          extractedLines.push(`- 감지된 섹션 제목: ${parsed.sectionHeaders.join(' / ')}`);
+        }
+        if (parsed.headCopies.length > 0) {
+          extractedLines.push(`- 감지된 슬라이드 원 메시지(Head Copy):\n` + parsed.headCopies.map((h, i) => `  · (${i + 1}) "${h}"`).join('\n'));
+        }
+        if (parsed.keyPoints.length > 0) {
+          extractedLines.push(`- 추출된 핵심 카드/차트 데이터 포인트 (${parsed.keyPoints.length}개):\n` + parsed.keyPoints.map((kp, i) => `  · Point ${i + 1}: ${kp}`).join('\n'));
+        }
+        if (parsed.sources.length > 0) {
+          extractedLines.push(`- 필수 표기 출처: ${parsed.sources.join(', ')}`);
+        }
+        if (extractedLines.length === 0) {
+          extractedLines.push(`- 사용자가 붙여넣은 리서치 원문(총 ${parsed.charCount.toLocaleString()}자)의 핵심 문장과 수치를 빠짐없이 추출하여 슬라이드 카드와 차트로 구성할 것.`);
+        }
+
+        topReflectedBlueprint = `[🎯 최우선 지시사항: 사용자가 붙여넣은 2단계 리서치 결과 맞춤 설계도]
+(주의: 임의의 가짜 예시를 지어내지 말고, 반드시 아래 추출된 실제 리서치 데이터와 하단 원문을  반영하여 슬라이드를 제작할 것!)
+${extractedLines.join('\n')}\n\n`;
+
+        layoutMappingSection = `[📐 3. 붙여넣은 데이터 기반 슬라이드 레이아웃 매핑 규칙 (중복 금지)]
+- 위에 추출된 [카테고리 태그], [원 메시지(Head Copy)], [핵심 데이터 포인트], [파트 A 상세 본문]의 구체적인 핵심 수치와 기관명/사례명을 유지하되 상세 본문은 발표자 노트 또는 별도 보고서로 분리하고 슬라이드 안의 KPI 타일, 비교 바 차트, 원인 매트릭스 카드, STEP 1~3 실행 로드맵 카드, 비교 테이블에 배치할 것.
+- 만약 붙여넣은 내용이 특정 섹션(예: 해결 로드맵이나 원인 분석 등 일부 파트)에 집중되어 있다면, 선택한 총 ${count}장 안에서 해당 리서치 내용의 세부 단계(배경/현황 ➔ 핵심 포인트 분석 ➔ 단계별 실행 전략 ➔ 기대효과 비교표)로 깊이 있게 분할하여 6종 레이아웃(히어로 표지 / 3열 KPI 빅넘버 / 가로 막대차트 / 2x2 그리드 / STEP 1~3 로드맵 / 3열 비교표)으로 시각화할 것.`;
+
+        bottomRawDataSection = `\n\n=========================================\n[📥 사용자가 붙여넣은 2단계 리서치 원문 데이터 (시각화 필수 원본)]\n${contentInput}\n=========================================`;
+      } else {
+        statusBox.className = 'apply-status-box';
+        statusBox.innerHTML = `조사 결과를 붙여넣고 <strong>[조사 결과 반영 후 3단계로]</strong>를 선택하면, 다음 단계의 발표자료 프롬프트에 내용이 반영됩니다.`;
+
+        pill.className = 'prompt-status';
+        pill.textContent = `조사 결과 입력 후 디자인 프롬프트를 확인하세요.`;
+
+        layoutMappingSection = `[3. 선택한 장수에 맞춘 슬라이드 구성]
+${buildSlidePlan(count, topic)}
+카드·차트·원인 관계도·실행 로드맵·비교표를 내용에 맞게 배치하되, 한 장에는 하나의 핵심 메시지만 담을 것.`;
+
+        bottomRawDataSection = `\n\n(※ 2단계에서 조사 결과를 입력하고 [조사 결과 반영 후 3단계로]를 선택하면 원문이 결합됩니다.)`;
+      }
+
+      const guideBox = document.getElementById('route-guide-box');
+      const linksBox = document.getElementById('route-links');
+      let prompt = '';
+
+      if (currentRoute === 1) {
+        guideBox.innerHTML = `
+          <strong>💡 루트 A (강의용 · 마우스 수정 + 모션 웹 슬라이드) 사용 순서:</strong>
+          <ol style="margin-top:6px;">
+            <li>2단계 조사 결과가 아래 프롬프트에 반영되어 있습니다. 내용을 바꾸려면 <strong>[2. 근거 조사]</strong>로 돌아가세요.</li>
+            <li>아래 <strong>[Claude 열기]</strong> 또는 <strong>[Gemini 열기]</strong> 버튼을 누르면 반영된 프롬프트가 자동 복사되면서 사이트가 열립니다.</li>
+            <li>생성된 슬라이드 안의 <strong>모든 글자·숫자를 마우스로 클릭해 타이핑 수정</strong>하고 <strong>[💾 수정본 HTML 저장]</strong> 또는 <strong>[🖨️ PDF 인쇄]</strong>를 선택해 파일을 저장하세요.</li>
+          </ol>
+        `;
+        linksBox.innerHTML = `
+          <a href="https://claude.ai/new" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'claude', 's3-prompt-output')">
+            🧠 Claude 열기 (Artifacts) <span class="badge-free">HTML 작성</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://gemini.google.com/app" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'gemini', 's3-prompt-output')">
+            ✨ Gemini 열기 (Canvas) <span class="badge-free">HTML 작성</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://chatgpt.com/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'chatgpt', 's3-prompt-output')">
+            🚀 ChatGPT 열기 (Canvas) <span class="badge-free">외부 서비스</span> <span class="ext-arrow">↗</span>
+          </a>
+        `;
+
+        prompt = `${topReflectedBlueprint}위 "${topic}" 리서치 데이터를 바탕으로, 웹 브라우저에서 즉시 발표하고 마우스로 텍스트를 직접 수정·저장할 수 있는 **16:9 비율 인터랙티브 모션그래픽 프레젠테이션(단일 HTML 파일)**을 작성해 줘.
+
+[🚫 1. 절대 금지 사항 (AI 티 & 기계적 라벨 노출 차단)]
+- 슬라이드 화면 어디에도 기계적인 프레임워크 영문 단어나 '서론/본론/결론' 같은 템플릿 용어를 직접 노출하지 말 것! 상단 태그는 반드시 '01 · 배경 및 문제 정의', '02 · 실태 및 격차 분석', '03 · 구조적 원인 진단', '04 · 단계별 해결 로드맵', '05 · 기대 효과 및 제언'처럼 자연스럽고 전문적인 비즈니스/학술 명칭으로 표기할 것.
+- 보라색/네온 그라데이션, 촌스러운 그림자, 불필요한 이모지 남발 절대 금지.
+- 외부 이미지 태그(<img src="...">)는 링크 깨짐 위험이 있으므로 절대 사용하지 말고, 오직 순수 CSS 도형·차트·표와 인라인 SVG로만 시각화할 것.
+- 모든 슬라이드를 똑같은 '박스 3개 나열'로 반복하는 단조로운 구성 절대 금지.
+- 코드 중간에 \`<!-- 생략 -->\` 주석 없이 처음부터 끝까지 단일 HTML로  작동하게 작성할 것.
+
+[🎨 2. 디자인 시스템 (타이포그래피 & 컬러 토큰)]
+- 폰트: Pretendard 웹폰트 CDN을 불러와 전체 적용할 것.
+${themeSpec}
+- 규격: 슬라이드 스테이지는 \`width: 1920px; height: 1080px; padding: 64px 80px; transform-origin: top left;\`로 고정해 글자가 밖으로 넘치지 않게 할 것.
+- 모든 슬라이드 상단에는 [자연스러운 섹션 태그] + [핵심 결론 1줄 헤드카피(64px 이상, Bold)] + [보조 설명 1~2줄(36px 이상)]을 배치하고, 하단에는 [출처 각주]와 [슬라이드 번호]를 배치할 것.
+
+${layoutMappingSection}
+
+[🎬 4. 진짜 모션그래픽 3종 구현 (CSS + 바닐라 JS)]
+1) 순차 등장(Stagger): 슬라이드 전환 시 제목 ➔ 부제 ➔ 본문 카드가 0.08초 간격(\`cubic-bezier(0.16, 1, 0.3, 1)\`)으로 아래에서 위로 부드럽게 떠오를 것.
+2) 숫자 카운트업(Count-Up): KPI 숫자는 슬라이드가 열릴 때 0에서 목표 수치까지 1초 동안 올라가는 JS 애니메이션을 넣을 것.
+3) 차트 게이지 채움: 가로 막대그래프(\`.bar-fill\`)는 슬라이드가 열릴 때 \`width: 0%\`에서 목표 \`data-width\`까지 부드럽게 차오를 것.
+
+[✏️ 5. 인간 마우스 수정 & 파일 저장 & PDF 백지 방지 (필수 기능)]
+1) 직접 수정: 모든 제목, 본문, 숫자, 표 셀에 \`contenteditable="true"\`를 부여해 마우스 클릭 즉시 키보드로 수정 가능하게 할 것.
+2) 방향키 충돌 방지(중요): \`keydown\` 이벤트로 좌우 화살표 슬라이드 이동을 구현할 때, 반드시 \`if (document.activeElement && document.activeElement.isContentEditable) return;\` 조건을 넣어 글자 타이핑 중에는 슬라이드가 넘어가지 않게 막을 것!
+3) 상단 컨트롤 바: [◀ 이전] [페이지 표시] [다음 ▶] 버튼과 함께, 수정한 내용을 영구 보관하는 **[💾 수정본 HTML 다운로드]** 버튼(\`document.documentElement.outerHTML\`을 Blob으로 저장)과 **[🖨️ 전체 PDF 인쇄]** 버튼을 만들 것.
+4) PDF 백지 버그 방지(\`@media print\`): 인쇄 시 상단 컨트롤 바는 숨기고, 모든 슬라이드(\`.slide\`)를 \`display: flex !important; page-break-after: always;\`로 펼치며, 모든 애니메이션 요소의 \`opacity: 1 !important; transform: none !important;\`로 강제 고정해 빈 페이지 없이  인쇄되게 할 것.${bottomRawDataSection}`;
+
+      } else if (currentRoute === 2) {
+        guideBox.innerHTML = `
+          <strong>💡 루트 B (PPT / 캔바 벡터 도형 편집 + 모핑 모션) 사용 순서:</strong>
+          <ol style="margin-top:6px;">
+            <li>2단계 조사 결과가 아래 프롬프트에 반영되어 있습니다. 내용을 바꾸려면 <strong>[2. 근거 조사]</strong>로 돌아가세요.</li>
+            <li>아래 <strong>[Claude 열기]</strong> 버튼을 누르면 프롬프트가 자동 복사되면서 <strong>순수 벡터 SVG 다이어그램</strong>과 <strong>PPT 모핑 연출표</strong>를 생성할 수 있습니다.</li>
+            <li>다운로드한 <code>.svg</code> 파일을 파워포인트(또는 캔바)에 넣고 <strong>[우클릭 ➔ 도형으로 변환]</strong>을 누르면 모든 도형과 글자가  낱개로 분리됩니다!</li>
+          </ol>
+        `;
+        linksBox.innerHTML = `
+          <a href="https://claude.ai/new" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'claude', 's3-prompt-output')">
+            🧠 Claude 열기 (SVG 코드 생성) <span class="badge-free">외부 서비스</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://www.canva.com/ko_kr/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'canva', 's3-prompt-output')">
+            🎨 Canva 열기 (SVG 편집 & 매치앤무브) <span class="badge-free">외부 서비스</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://jitter.video/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'jitter', 's3-prompt-output')">
+            ⚡ Jitter 열기 (모션그래픽 제작) <span class="badge-free">외부 서비스</span> <span class="ext-arrow">↗</span>
+          </a>
+        `;
+
+        prompt = `${topReflectedBlueprint}위 "${topic}" 리서치 데이터를 바탕으로, 파워포인트(PPT)와 캔바(Canva)에 넣어서 **[마우스 우클릭 ➔ 도형으로 변환(그룹 해제)]**을 눌렀을 때 모든 도형과 글자가 깨짐 없이  낱개로 분리되는 **1920x1080 고해상도 인포그래픽 SVG 파일 코드**와 **PPT 모핑(Morph) 모션 연출표**를 만들어줘.
+
+[🎨 1. PPT/캔바 도형 분리를 위한 엄격한 SVG 기술 규칙]
+- 캔버스 규격: \`<svg viewBox="0 0 1920 1080" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg">\`
+- 디자인 테마:
+${themeSpec}
+- [기계적 라벨 노출 금지]: 장표 내에 기계적인 프레임워크 영문 단어를 직접 표기하지 말고, 추출된 실제 카테고리명과 원 메시지를 상단 헤드라인으로 표기할 것.
+- [가장 중요 - PPT 호환성]: 파워포인트에서 도형으로 변환할 때 깨지지 않도록 \`<foreignObject>\`, 복잡한 CSS 클래스, 외부 이미지(\`<image>\`)는 절대 쓰지 말 것!
+- 오직 표준 SVG 벡터 태그(\`<rect>\`, \`<circle>\`, \`<line>\`, \`<path>\`, \`<g>\`)와 인라인 속성(\`fill\`, \`stroke\`, \`rx\`), 그리고 독립된 \`<text font-family="Pretendard, Malgun Gothic, sans-serif">\` 태그만 사용하여 그리드 형태로 정교하게 배치할 것.
+
+[🎬 2. 파워포인트 '모핑(Morph)' & 캔바 '매치 앤 무브' 모션 연출 가이드]
+- SVG 코드 출력 아래에, 전체 슬라이드를 파워포인트나 캔바에서 넘어갈 때 스르륵 움직이게 만드는 **[슬라이드별 모핑 연출 스토리보드 표]**를 작성해 줘.${bottomRawDataSection}`;
+
+      } else {
+        guideBox.innerHTML = `
+          <strong>💡 루트 C (프로 디자이너 템플릿 + Napkin AI 조립) 사용 순서:</strong>
+          <ol style="margin-top:6px;">
+            <li>2단계 조사 결과가 아래 프롬프트에 반영되어 있습니다. 내용을 바꾸려면 <strong>[2. 근거 조사]</strong>로 돌아가세요.</li>
+            <li>생성된 프롬프트를 AI에 넣어 <strong>템플릿 텍스트 상자 크기에 분량에 맞게 맞춘 요약표(소제목 10자 + 본문 2줄)</strong>를 뽑아 미리캔버스/캔바 템플릿에 복사·붙여넣기합니다.</li>
+            <li>함께 생성된 <strong>[Napkin AI 전용 텍스트]</strong>를 도식 툴인 <strong>Napkin AI</strong>에 붙여넣어 발표용 투명 PNG 다이어그램을 뽑아 슬라이드에 얹습니다!</li>
+          </ol>
+        `;
+        linksBox.innerHTML = `
+          <a href="https://www.miricanvas.com/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'miricanvas', 's3-prompt-output')">
+            🇰🇷 미리캔버스 열기 <span class="badge-free">한국형 템플릿</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://app.napkin.ai/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'napkin', 's3-prompt-output')">
+            ⚡ Napkin AI 열기 <span class="badge-free">도식 자동생성</span> <span class="ext-arrow">↗</span>
+          </a>
+          <a href="https://www.canva.com/ko_kr/" target="_blank" rel="noopener" class="tool-link" onclick="return openAITool(event, 'canva', 's3-prompt-output')">
+            🎨 Canva 열기 <span class="badge-free">템플릿</span> <span class="ext-arrow">↗</span>
+          </a>
+        `;
+
+        prompt = `${topReflectedBlueprint}내가 미리캔버스(또는 캔바)에서 고른 '전문 디자이너의 사용 가능한 PPT 템플릿'에 위 "${topic}" 리서치 내용을 레이아웃 깨짐이나 글자 넘침 없이 그대로 복사해서 붙여넣으려고 해.
+
+반드시 위에서 추출된 실제 리서치 데이터(원 메시지, 핵심 수치, 단계별 전략, 출처)를 사용하여 아래 **[글자 수 칼맞춤 규칙]**에 맞춰 정리해 줘.
+
+[📐 슬라이드별 글자 수 칼맞춤 규칙 (레이아웃 깨짐 방지)]
+각 슬라이드마다 아래 4가지 요소를 표 형태로 명확히 구분해서 출력해 줘:
+1. [슬라이드 상단 자연스러운 카테고리 & 메인 제목]: 공백 포함 18자 이내 (명사형 종결)
+2. [원 메시지 (Sub-Headline)]: 제목 바로 아래 들어갈 핵심 결론 1줄 (공백 포함 30자 이내)
+3. [본문 3단 박스 채우기용 세트]:
+   - 박스 1: [강조 숫자/키워드 1개] + [소제목 10자 이내] + [개조식 설명 2줄 (각 줄 28자 이내)]
+   - 박스 2: [강조 숫자/키워드 1개] + [소제목 10자 이내] + [개조식 설명 2줄 (각 줄 28자 이내)]
+   - 박스 3: [강조 숫자/키워드 1개] + [소제목 10자 이내] + [개조식 설명 2줄 (각 줄 28자 이내)]
+4. [⚡ Napkin AI 도식 변환용 원고 박스]: 해당 슬라이드의 인과관계나 해결 프로세스를 Napkin AI에 붙여넣었을 때 가장 깔끔한 화살표 다이어그램이 나오도록 다듬은 4줄짜리 구조화 텍스트${bottomRawDataSection}`;
+      }
+
+      document.getElementById('s3-prompt-output').textContent = slideCountInstruction(count) + prompt + '\n\n' + READABILITY_POLICY + '\n[배경 움직임] '+(motion?'배경만 30초 이상 주기로 12px 이하 천천히 움직인다. 깜빡임·빠른 점멸 금지.':'배경은 정지 상태로 유지한다.')+' prefers-reduced-motion에서는 배경과 슬라이드 효과를 정지하고 내용을 즉시 표시한다. SVG·PPT·PDF 출력은 항상 정적 배경으로 제공한다. SVG에서는 CSS 배경 지시를 색상·구도 참고로만 사용하고 기본 SVG 도형과 연한 채움으로 다시 표현한다. 외부 서비스 요금은 별도이므로 무료 사용을 보장한다고 쓰지 않는다.';
+    }
+
+    function copyText(elementId) {
+      if (!requireSlideCount()) return;
+      const text = document.getElementById(elementId).textContent;
+      copyStringToClipboard(text);
+      showToast('✅ 클립보드에 프롬프트가 복사되었습니다! 외부 AI 창에 붙여넣기(Ctrl+V) 하세요.');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2900);
+    }
+
+    
+    function hasUsableResult(id) {
+      const text=document.getElementById(id).value.trim();
+      return text.length>=20 && new Set(text.replace(/\s/g,'')).size>=8;
+    }
+    function refreshProgress() {
+      const one=hasUsableResult('s2-outline'),two=one&&hasUsableResult('s3-content');
+      ['목차 결과 '+(one?'입력됨':'대기'),'조사 결과 '+(two?'입력됨':'대기'),two?'디자인 선택 가능':'이전 결과 필요'].forEach((text,i)=>document.getElementById('step-status-'+(i+1)).textContent=text);
+      document.querySelectorAll('.step-tab').forEach((el,i)=> {el.setAttribute('aria-current',el.classList.contains('active')?'step':'false');el.classList.toggle('step-locked',(i===1&&!one)||(i===2&&!two));});
+    }
+    function switchStep(stepNum) {
+      if (![1, 2, 3].includes(stepNum)) return false;
+      if(stepNum===2||stepNum===3) {
+        if (!requireSlideCount()) return false;
+        const required=['s2-outline']; if(stepNum===3)required.push('s3-content');
+        for(const id of required) {
+          if(!hasUsableResult(id)) {
+            const previous=id==='s2-outline'?1:2;
+            showStep(previous);
+            const field=document.getElementById(id),error=document.getElementById(id+'-error');
+            error.textContent='외부 AI의 실제 결과를 20자 이상 붙여넣어 주세요. 반복 문자나 짧은 확인 문구만으로는 진행할 수 없습니다. 사실성 검증은 별도로 필요합니다.';
+            field.setAttribute('aria-invalid','true');field.focus();field.scrollIntoView({behavior:'smooth',block:'center'});return false;
+          }
+        }
+        updateStep2Prompt(false);if(stepNum===3)updateStep3Prompt(false);
+      }
+      showStep(stepNum);
+      const panel=document.getElementById('step-'+stepNum),nav=document.querySelector('.step-nav');
+      window.scrollTo({top:window.scrollY+panel.getBoundingClientRect().top-nav.offsetHeight-16,behavior:'instant'});
+      return true;
+    }
+
+    ['s2-outline','s3-content'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{
+      document.getElementById(id).removeAttribute('aria-invalid');document.getElementById(id+'-error').textContent='';refreshProgress();
+    }));
+    // Initialize on load
+    updateStep1Prompt();
+    refreshProgress();
+  </script>
+</body>
+</html>
